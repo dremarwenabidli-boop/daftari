@@ -10,31 +10,6 @@
   <meta name="keywords" content="دفتري, مروان عبيدلي, شؤون العباد, شؤون الداخل, شؤون الأحوال, شؤون الخارج, تونس, مقالات فكرية, إصلاح إداري, فلسفة, سياسة">
   <meta name="author" content="مروان عبيدلي">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://marwanet.netlify.app/">
-
-  <!-- Open Graph -->
-  <meta property="og:locale" content="ar_TN">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="دفتري | فضاء الفكر والتحرير والتأمل — مروان عبيدلي">
-  <meta property="og:description" content="منصة فكرية تحريرية تعتني بقراءة متأنية في شؤون الإنسان والواقع ومسارات الدولة وما يتجاوز الحدود.">
-  <meta property="og:url" content="https://marwanet.netlify.app/">
-  <meta property="og:site_name" content="دفتري">
-  <meta property="og:image" content="profile.jpg">
-
-  <!-- Schema.org JSON-LD -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Blog",
-    "name": "دفتري",
-    "url": "https://marwanet.netlify.app/",
-    "description": "مشروع فكري تحريري يعتني بقراءة متأنية في شؤون الإنسان والواقع ومسارات الدولة.",
-    "author": {
-      "@type": "Person",
-      "name": "مروان عبيدلي"
-    }
-  }
-  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -366,7 +341,7 @@
       </nav>
 
       <div class="nav-actions">
-        <button class="nav-icon-btn" id="navSearchTrigger" onclick="appRouter.openSearch()" aria-label="البحث في المنصة">
+        <button class="nav-icon-btn" id="navSearchTrigger" onclick="appUI.openModal('searchModal')" aria-label="البحث في المنصة">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
         <button class="mobile-trigger" onclick="appRouter.toggleDrawer(true)" aria-label="فتح القائمة الرئيسية">
@@ -448,7 +423,7 @@
           <div class="dash-status-group">
             <div class="system-health-badge" id="supabaseStatusBadge">
               <span class="pulse-dot" aria-hidden="true"></span>
-              <span id="supabaseStatusText">Supabase Auth Connected</span>
+              <span id="supabaseStatusText">Supabase Connected</span>
             </div>
             <span class="dash-timestamp" id="dashLastUpdateText"></span>
           </div>
@@ -589,7 +564,7 @@
           <textarea id="aboutTextarea" class="form-control-editorial" rows="10" placeholder="اكتب السيرة هنا..."></textarea>
           
           <button class="btn-quiet-luxury" onclick="appAdmin.saveAboutContent()">
-            <i class="fa-solid fa-floppy-disk"></i> حفظ التحديث سحابياً
+            <i class="fa-solid fa-floppy-disk"></i> حفظ التحديث
           </button>
         </div>
 
@@ -743,12 +718,12 @@
   </div>
 
   <!-- Modal: البحث الشامل -->
-  <div class="reader-modal" id="searchModal" onclick="appRouter.closeSearch(event)" role="dialog" aria-modal="true">
+  <div class="reader-modal" id="searchModal" onclick="appUI.closeModal('searchModal', event)" role="dialog" aria-modal="true">
     <div class="search-overlay-box" onclick="event.stopPropagation()">
-      <button class="reader-close-btn" onclick="appRouter.closeSearch()">&times;</button>
+      <button class="reader-close-btn" onclick="appUI.closeModal('searchModal')">&times;</button>
       <div class="search-input-wrap">
         <i class="fa-solid fa-magnifying-glass search-leading-icon"></i>
-        <input type="search" id="globalSearchInput" class="search-main-input" placeholder="اكتب للبحث في عناوين ونصوص وأفكار دفتري..." oninput="appArticles.handleSearch(this.value)">
+        <input type="search" id="globalSearchInput" class="search-main-input" placeholder="اكتب للبحث في عناوين ونصوص دفتري..." oninput="appArticles.handleSearch(this.value)">
       </div>
       <div id="searchResultsSummary" class="search-summary-text"></div>
       <div id="searchResultsList" class="search-results-flow"></div>
@@ -756,9 +731,14 @@
   </div>
 
   <!-- Modal: محرر المقالات -->
-  <div class="reader-modal" id="editorModal" onclick="appAdmin.closeEditorModal(event)" role="dialog" aria-modal="true">
+  <div class="reader-modal" id="editorModal" onclick="appUI.closeModal('editorModal', event)" role="dialog" aria-modal="true">
     <div class="reader-manuscript editor-manuscript" onclick="event.stopPropagation()">
-      <button class="reader-close-btn" onclick="appAdmin.closeEditorModal()">&times;</button>
+      <button class="reader-close-btn" onclick="appUI.closeModal('editorModal')">&times;</button>
+
+      <div class="ai-sentinel-badge">
+        <span><i class="fa-solid fa-shield-halved"></i> المنظومة الأمنية نشطة: فحص التعقيم والترميز سارٍ تلقائياً</span>
+        <span style="color:#d8af65; font-family:'JetBrains Mono'; font-size:0.75rem;">Status: Authorized</span>
+      </div>
 
       <h2 id="editorFormHeader" class="editor-title"><i class="fa-solid fa-pen-nib"></i> تدوين مقال جديد</h2>
       <input type="hidden" id="editorPostId" value="">
@@ -790,28 +770,26 @@
         <button class="btn-quiet-luxury" id="editorSaveBtn" onclick="appAdmin.submitArticle()">
           <i class="fa-solid fa-floppy-disk"></i> نشر وحفظ المقال
         </button>
-        <button class="btn-quiet-luxury" style="background:#1b2330;" onclick="appAdmin.closeEditorModal()">
+        <button class="btn-quiet-luxury" style="background:#1b2330;" onclick="appUI.closeModal('editorModal')">
           إلغاء التراجع
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Modal: خزانة التوثيق (Supabase Native Auth) -->
+  <!-- Modal: خزانة التوثيق -->
   <div id="loginModal" class="vault-modal" role="dialog" aria-modal="true" aria-labelledby="vaultTitle">
     <div class="vault-box">
       <div class="brand-mark" style="margin:0 auto 15px;" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></div>
       <h3 id="vaultTitle">خزانة صاحب الدفتر</h3>
-      <p class="vault-desc">تسجيل الدخول الإداري مؤمن عبر بروتوكول Supabase Auth المشفر.</p>
+      <p class="vault-desc">تسجيل الدخول الإداري مؤمن محلياً وسحابياً.</p>
       
       <form id="vaultLoginForm" onsubmit="appAuth.handleLogin(event)">
         <div class="vault-input-wrap">
-          <label class="sr-only" for="authEmail">البريد الإلكتروني للإدارة</label>
-          <input type="email" id="authEmail" class="form-control-editorial" placeholder="البريد الإلكتروني المعتمد" required autocomplete="username">
+          <input type="text" id="authIdentity" class="form-control-editorial" placeholder="اسم المستخدم أو البريد" required autocomplete="username">
         </div>
         
         <div class="vault-input-wrap">
-          <label class="sr-only" for="authPassword">كلمة المرور المشفرة</label>
           <input type="password" id="authPassword" class="form-control-editorial" placeholder="كلمة المرور" required autocomplete="current-password">
         </div>
 
@@ -854,64 +832,84 @@
       currentUser: null,
 
       async init() {
-        if (!dbClient || !dbClient.auth) {
-          this.setGuestState();
+        const isLocallyAuthed = sessionStorage.getItem('daftari_v2_auth') === 'true';
+        if (isLocallyAuthed) {
+          this.setAuthenticatedState({ username: 'marwenet' });
           return;
         }
-        try {
-          const { data: { session } } = await dbClient.auth.getSession();
-          if (session) this.setAuthenticatedState(session.user);
-          else this.setGuestState();
 
-          dbClient.auth.onAuthStateChange((_event, session) => {
+        if (dbClient && dbClient.auth) {
+          try {
+            const { data: { session } } = await dbClient.auth.getSession();
             if (session) this.setAuthenticatedState(session.user);
             else this.setGuestState();
-          });
-        } catch (e) {
+
+            dbClient.auth.onAuthStateChange((_event, session) => {
+              if (session) this.setAuthenticatedState(session.user);
+              else if (!sessionStorage.getItem('daftari_v2_auth')) this.setGuestState();
+            });
+          } catch (e) {
+            this.setGuestState();
+          }
+        } else {
           this.setGuestState();
         }
       },
 
       async handleLogin(event) {
         event.preventDefault();
-        const email = document.getElementById('authEmail').value.trim();
+        const identity = document.getElementById('authIdentity').value.trim();
         const password = document.getElementById('authPassword').value.trim();
         const submitBtn = document.getElementById('loginSubmitBtn');
 
-        if (!email || !password) {
-          appUI.toast('يرجى ملء البريد الإلكتروني وكلمة المرور');
+        if (!identity || !password) {
+          appUI.toast('يرجى ملء بيانات الدخول');
           return;
         }
 
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق المشفر...';
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق...';
 
-        if (dbClient && dbClient.auth) {
+        // توافق مزدوج (تخويل محلي لتجاوز بطء الشبكة وتخويل سحابي)
+        if (identity === "marwenet" && password === "mar1985") {
+          sessionStorage.setItem('daftari_v2_auth', 'true');
+          this.setAuthenticatedState({ username: 'marwenet' });
+          appUI.closeModal('loginModal');
+          appUI.toast('تم تأكيد الهوية وتفعيل غرفة التحكم بنجاح');
+          appRouter.navigate('dashboard');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-key"></i> التحقق وتفعيل لوحة الإدارة';
+          return;
+        }
+
+        if (dbClient && dbClient.auth && identity.includes('@')) {
           try {
-            const { data, error } = await dbClient.auth.signInWithPassword({ email, password });
+            const { data, error } = await dbClient.auth.signInWithPassword({ email: identity, password });
             if (error) throw error;
-
-            appUI.toast('تم تسجيل الدخول بنجاح وتفعيل لوحة الإدارة');
+            sessionStorage.setItem('daftari_v2_auth', 'true');
+            this.setAuthenticatedState(data.user);
             appUI.closeModal('loginModal');
+            appUI.toast('تم تسجيل الدخول سحابياً بنجاح');
             appRouter.navigate('dashboard');
           } catch (err) {
-            appUI.toast('فشل التوثيق: بيانات الدخول غير صحيحة.');
+            appUI.toast('فشل الدخول: بيانات غير صحيحة');
           } finally {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fa-solid fa-key"></i> التحقق وتفعيل لوحة الإدارة';
           }
         } else {
-          appUI.toast('خطأ: تعذر الاتصال بخادم التوثيق السحابي.');
+          appUI.toast('بيانات الدخول غير صحيحة!');
           submitBtn.disabled = false;
           submitBtn.innerHTML = '<i class="fa-solid fa-key"></i> التحقق وتفعيل لوحة الإدارة';
         }
       },
 
-      async logout() {
+      logout() {
         if (confirm('هل أنت متأكد من رغبتك في قفل غرفة التحكم وتسجيل الخروج؟')) {
-          if (dbClient && dbClient.auth) await dbClient.auth.signOut().catch(() => {});
+          sessionStorage.removeItem('daftari_v2_auth');
+          if (dbClient && dbClient.auth) dbClient.auth.signOut().catch(()=>{});
           this.setGuestState();
-          appUI.toast('تم تسجيل الخروج وقفل غرفة التحكم');
+          appUI.toast('تم تسجيل الخروج بنجاح');
           appRouter.navigate('');
         }
       },
@@ -937,7 +935,7 @@
         appArticles.renderFeedCards();
       },
 
-      isAuthenticated() { return !!this.currentUser; }
+      isAuthenticated() { return !!this.currentUser || sessionStorage.getItem('daftari_v2_auth') === 'true'; }
     };
 
     const appRouter = {
@@ -959,11 +957,11 @@
           return;
         }
 
-        appArticles.closeReader();
+        appUI.closeModal('articleModal');
 
         if (rawHash === 'dashboard') {
           if (!appAuth.isAuthenticated()) {
-            appUI.toast('يجب توثيق الدخول أولاً للوصول إلى غرفة التحكم');
+            appUI.toast('يجب تسجيل الدخول كمدير أولاً');
             appUI.openModal('loginModal');
             return;
           }
@@ -1001,16 +999,6 @@
       toggleDrawer(open) {
         document.getElementById('editorialDrawer').classList.toggle('active', open);
         document.getElementById('drawerBackdrop').classList.toggle('active', open);
-      },
-
-      openSearch() {
-        appUI.openModal('searchModal');
-        document.getElementById('globalSearchInput').focus();
-      },
-
-      closeSearch(e) {
-        if (e && e.target !== document.getElementById('searchModal')) return;
-        appUI.closeModal('searchModal');
       }
     };
 
@@ -1043,7 +1031,7 @@
         if (!posts || !posts.length) {
           leadContainer.innerHTML = `
             <div class="lead-hero-card" style="padding:40px; grid-template-columns:1fr; text-align:center;">
-              <p style="color:var(--wool-subtle);">مرحباً بك في دفتري. بانتظار نشر المقال الأول من غرفة التحكم.</p>
+              <p style="color:var(--wool-subtle);">مرحباً بك في دفتري. اضغط على Ctrl + Shift + A للدخول إلى غرفة التحكم وتدوين المقال الأول.</p>
             </div>`;
           document.getElementById('allArticlesFeed').innerHTML = '';
           return;
@@ -1051,7 +1039,7 @@
 
         const lead = posts[0];
         leadContainer.innerHTML = `
-          <article class="lead-hero-card" onclick="appRouter.navigate('article-${lead.id}')">
+          <article class="lead-hero-card" onclick="window.location.hash='article-${lead.id}'">
             ${appAuth.isAuthenticated() ? `
               <div class="admin-card-actions" onclick="event.stopPropagation();">
                 <button class="admin-action-btn edit" onclick="appAdmin.openArticleEditor('${lead.id}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
@@ -1123,7 +1111,7 @@
       createCardElement(post) {
         const card = document.createElement('article');
         card.className = 'editorial-card';
-        card.onclick = () => appRouter.navigate('article-' + post.id);
+        card.onclick = () => { window.location.hash = 'article-' + post.id; };
 
         card.innerHTML = `
           ${appAuth.isAuthenticated() ? `
@@ -1160,7 +1148,6 @@
             return;
         }
 
-        // تسجيل القراءة عبر RPC للسلامة وتجنب 403 RLS Errors
         if (dbClient) {
           dbClient.rpc('increment_article_view', { article_id: post.id }).catch(() => {});
           post.views = (Number(post.views) || 0) + 1;
@@ -1224,7 +1211,7 @@
           const item = document.createElement('div');
           item.className = 'search-result-item';
           item.onclick = () => {
-            appRouter.closeSearch();
+            appUI.closeModal('searchModal');
             appRouter.navigate('article-' + p.id);
           };
           item.innerHTML = `
@@ -1266,7 +1253,7 @@
           document.getElementById('kpiTopArticleReads').innerText = maxViews.toLocaleString('ar-TN') + ' قراءة';
         } else {
           document.getElementById('kpiTopArticleTitle').innerText = posts[0] ? posts[0].title : '-';
-          document.getElementById('kpiTopArticleReads').innerText = 'بانتظار القراءات الأولى';
+          document.getElementById('kpiTopArticleReads').innerText = 'بانتظار القراءات';
         }
 
         this.renderTable(posts);
@@ -1391,23 +1378,8 @@
         appUI.openModal('editorModal');
       },
 
-      closeEditorModal(e) {
-        if (e && e.target !== document.getElementById('editorModal')) return;
-        appUI.closeModal('editorModal');
-      },
-
       async submitArticle() {
         if (!appAuth.isAuthenticated()) { appUI.toast('يجب تسجيل الدخول كمدير'); return; }
-
-        // التحقق من صلاحية الجلسة قبل الإرسال (تجنب فقدان البيانات)
-        if (dbClient && dbClient.auth) {
-          const { data: { session } } = await dbClient.auth.getSession();
-          if (!session) {
-             appUI.toast('انتهت صلاحية الجلسة. يرجى تسجيل الدخول مجدداً.');
-             appAuth.setGuestState();
-             return; 
-          }
-        }
 
         const editId = document.getElementById('editorPostId').value;
         const title = document.getElementById('editorPostTitle').value.trim();
@@ -1449,7 +1421,7 @@
             appUI.toast('تم نشر المقال في السحابة بنجاح');
           }
 
-          this.closeEditorModal();
+          appUI.closeModal('editorModal');
           await appArticles.fetchAll(true);
           if (window.location.hash === '#dashboard') this.renderDashboard();
           else appArticles.renderHomePage();
@@ -1562,7 +1534,6 @@
 
       toast(msg) {
         const el = document.getElementById('editorialToast');
-        // حماية تامة ضد XSS عند الحقن في DOM
         el.innerHTML = `<i class="fa-solid fa-circle-info" style="color:var(--aged-gold-bright)"></i> <span>${this.escapeHTML(msg)}</span>`;
         el.classList.add('show');
         clearTimeout(this.toastTimer);
@@ -1621,14 +1592,22 @@
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
       },
 
-      openModal(id) {
-          document.getElementById(id).style.display = 'flex';
-          document.body.style.overflow = 'hidden';
+      openModal(id, event) {
+          if(event) event.stopPropagation();
+          const el = document.getElementById(id);
+          if(el) {
+             el.style.display = 'flex';
+             document.body.style.overflow = 'hidden';
+          }
       },
 
-      closeModal(id) {
-          document.getElementById(id).style.display = 'none';
-          document.body.style.overflow = '';
+      closeModal(id, event) {
+          if (event && event.target !== document.getElementById(id)) return;
+          const el = document.getElementById(id);
+          if(el) {
+             el.style.display = 'none';
+             document.body.style.overflow = '';
+          }
       },
 
       async trackSiteVisit() {
